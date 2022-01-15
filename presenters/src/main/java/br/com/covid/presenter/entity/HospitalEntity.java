@@ -1,18 +1,23 @@
 package br.com.covid.presenter.entity;
 
 import br.com.covid.core.data.output.HospitalOutputPort;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.persistence.*;
 
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class HospitalEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column
@@ -32,11 +37,9 @@ public class HospitalEntity {
         LocalizacaoEntity localizacaoEntity = LocalizacaoEntity.builder()
                 .latitude(hospitalOutputPort.getLocalizacao().getLatitude())
                 .longitude(hospitalOutputPort.getLocalizacao().getLongitude())
-                .id(null)
                 .build();
 
         return HospitalEntity.builder()
-                .id(null)
                 .cnpj(hospitalOutputPort.getCnpj())
                 .endereco(hospitalOutputPort.getEndereco())
                 .nome(hospitalOutputPort.getNome())
