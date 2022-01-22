@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = {"br.com.covid"})
 @EntityScan(basePackages = {"br.com.covid"})
-@ComponentScan(basePackages = {"br.com.covid"})
 @EnableJpaRepositories(basePackages = {"br.com.covid"})
 public class CovidCombateApplication {
 

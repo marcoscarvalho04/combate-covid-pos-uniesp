@@ -12,6 +12,8 @@ public class HospitalInputPort {
     private String cnpj;
     private String endereco;
     private LocalizacaoInputPort localizacao;
+    private Float percentualDeOcupacao;
+    private InventarioInputPort inventarioInputPort;
 
 
 }

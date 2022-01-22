@@ -1,14 +1,16 @@
 package br.com.covid.presenter.service;
 
 import br.com.covid.core.data.output.HospitalOutputPort;
+import br.com.covid.core.exceptions.NotFoundTipoItemException;
 import br.com.covid.core.ports.output.ManterHospitalOutputPort;
-import br.com.covid.presenter.entity.HospitalEntity;
+import br.com.covid.presenter.domain.HospitalEntity;
 import br.com.covid.presenter.repository.HospitalRepository;
 import br.com.covid.presenter.repository.LocalizacaoRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,9 +26,44 @@ public class ManterHospitalOutputPortImpl implements ManterHospitalOutputPort {
     }
 
     @Override
-    public void salvarHospital(HospitalOutputPort hospitalOutputPort) {
+    public HospitalOutputPort salvarHospital(HospitalOutputPort hospitalOutputPort) throws NotFoundTipoItemException {
         var toSave = HospitalEntity.converterOutputPortToEntity(hospitalOutputPort);
-        this.localizacaoRepository.save(toSave.getLocalizacao());
-        this.hospitalRepository.save(toSave);
+        return HospitalEntity.converterEntityToOutput(this.hospitalRepository.save(toSave));
     }
+
+    @Override
+    public List<HospitalOutputPort> getAllHospitais() {
+        return this.hospitalRepository.
+                findAll().
+                stream().
+                map(HospitalEntity::converterEntityToOutput).
+                collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteHospital(Long id) throws NoSuchElementException{
+        try {
+            var elementoHospital = this.hospitalRepository.findById(id).get();
+            this.hospitalRepository.delete(elementoHospital);
+        }catch (NoSuchElementException e) {
+            throw e;
+
+        }
+    }
+
+    @Override
+    public HospitalOutputPort atualizarPercentualDeOcupacao(Long id, Float percentualDeOcupacao) throws NoSuchElementException {
+        HospitalEntity elementoHospital;
+        try {
+            elementoHospital = this.hospitalRepository.findById(id).get();
+            elementoHospital.setPercentualOcupacao(percentualDeOcupacao);
+            this.hospitalRepository.save(elementoHospital);
+        }catch (NoSuchElementException e) {
+            throw e;
+
+        }
+        return HospitalEntity.converterEntityToOutput(elementoHospital);
+    }
+
+
 }
